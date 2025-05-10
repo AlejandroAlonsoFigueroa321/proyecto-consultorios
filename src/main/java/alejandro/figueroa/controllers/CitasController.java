@@ -7,28 +7,19 @@ import alejandro.figueroa.repository.CitaRepository;
 import alejandro.figueroa.repository.ConsultorioRepository;
 import alejandro.figueroa.repository.DoctorRepository;
 import alejandro.figueroa.request.dto.CitaDTO;
-import alejandro.figueroa.services.DoctorService;
 import alejandro.figueroa.utils.validations.CitaValidationsUtils;
-import com.zaxxer.hikari.HikariDataSource;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 @Controller
-public class HelloWorldControler {
+public class CitasController {
 
 
     @Autowired
@@ -70,6 +61,9 @@ public class HelloWorldControler {
         //dd/MM/yyyy HH:mm:ss
         c.setHorario(this.cvu.fromStringToDate(cita.getHorario()));
 
+        if(c.getHorario() == null){
+            c.setHorario(new Date());
+        }
         String errors = this.runValidations(cita);
 
         if(errors.isEmpty()){
@@ -87,6 +81,10 @@ public class HelloWorldControler {
 
     public String runValidations(CitaDTO cita){
         Date horario  = this.cvu.fromStringToDate(cita.getHorario());
+
+        if(horario == null){
+            horario  = new Date();
+        }
 
         //1.-No se puede agendar cita en un mismo consultorio a la misma hora.
         String e1= this.cvu.validarMismoConsultorio(cita.getIdConsultorio(),horario);
